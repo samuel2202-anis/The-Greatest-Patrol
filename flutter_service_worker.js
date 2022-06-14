@@ -3,17 +3,20 @@ const MANIFEST = 'flutter-app-manifest';
 const TEMP = 'flutter-temp-cache';
 const CACHE_NAME = 'flutter-app-cache';
 const RESOURCES = {
-  "assets/AssetManifest.json": "196e731c5b88ec19fc06476ee93024e1",
+  "assets/AssetManifest.json": "7d65e8c4942500e4f13b5802ec5581a4",
 "assets/assets/a1.png": "5dc651d9371d97d9e0ede3fe3ad1504f",
 "assets/assets/a2.png": "3256e4be334d70a6131c3cf0ddedc031",
 "assets/assets/a3.png": "e930042edd525585b6d5ef92d08f0a74",
 "assets/assets/a4.png": "a1da795c53ea49d52a5733c1a702b52b",
 "assets/assets/cc.jpg": "a9c7b2c853653565c6a6c7d74aea85f8",
 "assets/assets/egypt2.json": "51920ee2882c011eba49e67e42ed9f17",
+"assets/assets/gif1.gif": "67f598e7983638239fda711bf7fe4ec1",
+"assets/assets/gif2.gif": "d79fcf84f3cb4cd42a78323d35dfd961",
 "assets/assets/moussa.jpg": "5eb5571b48246f02b543a1276a633171",
+"assets/assets/no_internet.gif": "1625582196987eb1860b214c7d63f321",
 "assets/FontManifest.json": "dc3d03800ccca4601324923c0b1d6d57",
 "assets/fonts/MaterialIcons-Regular.otf": "7e7a6cccddf6d7b20012a548461d5d81",
-"assets/NOTICES": "5d046dc91d597caa503789cb51f5446c",
+"assets/NOTICES": "93916cfc5bd6b840e169117f53933412",
 "assets/packages/cupertino_icons/assets/CupertinoIcons.ttf": "6d342eb68f170c97609e9da345464e5e",
 "canvaskit/canvaskit.js": "f00de1f742223b7cf4cec1c2a0cd9764",
 "canvaskit/canvaskit.wasm": "efe4a5da0205bb8d8c5aca7dad981abd",
@@ -24,9 +27,9 @@ const RESOURCES = {
 "icons/Icon-512.png": "96e752610906ba2a93c65f8abe1645f1",
 "icons/Icon-maskable-192.png": "c457ef57daa1d16f64b27b786ec2ea3c",
 "icons/Icon-maskable-512.png": "301a7604d45b3e739efc881eb04896ea",
-"index.html": "a5a40dafb53495b51a595987e2d7d741",
-"/": "a5a40dafb53495b51a595987e2d7d741",
-"main.dart.js": "aabd667b441aaa26d97c7c094de9c822",
+"index.html": "c2ce19c5c7a9858c74426625ea79a361",
+"/": "c2ce19c5c7a9858c74426625ea79a361",
+"main.dart.js": "c427f412f77446fc04ea87f7c7412dc5",
 "manifest.json": "78ae7ad75bf829c88ed8e4f105b734d3",
 "version.json": "547c428716033683c36754dba8d8adb6"
 };
