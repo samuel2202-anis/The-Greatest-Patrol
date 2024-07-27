@@ -1,11 +1,11 @@
 {
-    "name": "DeVote",
-    "short_name": "DeVote",
+    "name": "SGWEN Game",
+    "short_name": "The Game",
     "start_url": ".",
     "display": "standalone",
-    "background_color": "#00004d",
-    "theme_color": "#00004d",
-    "description": "An Electronic Voting Project using Distributed Ledger Technology (DLT)",
+    "background_color": "#0175C2",
+    "theme_color": "#0175C2",
+    "description": "le3bt sho3bt kshafaa.",
     "orientation": "portrait-primary",
     "prefer_related_applications": false,
     "icons": [
