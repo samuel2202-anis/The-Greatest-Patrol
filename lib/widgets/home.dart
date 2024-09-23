@@ -333,6 +333,8 @@ class _HomeState extends State<Home> {
                             context,
                             MaterialPageRoute(
                                 builder: (context) => QuizGame(
+                                      groupId: group,
+                                      teamId: patrouille,
                                 )),
                           ),
                           child: Text(
