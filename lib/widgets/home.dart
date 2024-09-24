@@ -8,6 +8,7 @@ import 'package:video_player/video_player.dart';
 
 import '../login.dart';
 import '../theme.dart';
+import 'finishWidget.dart';
 import 'game.dart';
 
 class Home extends StatefulWidget {
@@ -26,6 +27,7 @@ class _HomeState extends State<Home> {
   String patrouilleScore = '';
   int hours = 1;
   String score = '';
+  bool finished = false;
   bool isPlaying = false;
   bool isVideo=true;
   String taskName = '';
@@ -36,6 +38,8 @@ class _HomeState extends State<Home> {
   void getPoint() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     group = prefs.getString('group')!;
+    finished = prefs.getBool('finished') ?? false;
+    print('finished: $finished');
     patrouille = prefs.getString('patrouille')!;
     name = prefs.getString('name')!;
     if (group.isNotEmpty && patrouille.isNotEmpty) {
@@ -329,15 +333,24 @@ class _HomeState extends State<Home> {
                           ),
                         ),
                         InkWell(
-                          onTap: () => Navigator.push(
+                          onTap: () async{ SharedPreferences prefs = await SharedPreferences.getInstance();
+    finished = prefs.getBool('finished') ?? false;
+    print('finished: $finished');
+    finished?  showDialog(
+            context: context,
+            builder: (BuildContext context) {
+              return FinishWidget();
+            },
+          ):Navigator.push(
                             context,
                             MaterialPageRoute(
                                 builder: (context) => QuizGame(
                                       groupId: group,
                                       teamId: patrouille,
                                 )),
-                          ),
-                          child: Text(
+                          );
+    } 
+                         , child: Text(
                             '  اللعبة  ',
                             style: TextStyle(
                               fontSize: 12,

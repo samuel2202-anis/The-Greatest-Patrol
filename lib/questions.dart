@@ -1,0 +1,30 @@
+
+import 'package:den/functions.dart';
+
+  List<Question> questions = [
+    Question(question: 'غني اغنية كشفية مع طليعتك ( مساعدين)', answer: 'اغنية كشفية'),
+    Question(question: 'شفرة عادية', answer: 'شفرة'),
+    Question(question: 'ما هي االدولة التي تم بها اخر مؤتمر كشفي عالمي ( شفرة)', answer: 'الدولة'),
+    Question(question: 'متي تأسست الحركة الكشفية في مصر', answer: '1914'),
+    // Question(question: 'من هي مؤسسة المرشدات ', answer: 'أوليفير'),
+    // Question(question: 'عمل ( 15 ضغط فردي + 30 بطن فردي + عربية فول في دقيقة للطليعة) ( مساعدين)', answer: 'تمارين'),
+    // Question(question: 'كم عدد المصريين الحاصلين علي نوبل', answer: '4'),
+    // Question(question: 'لعبة رمي الجولة (مساعدين)', answer: 'رمي الجولة'),
+    // Question(question: 'شفرة عادية', answer: 'شفرة'),
+    // Question(question: 'كيم تذوق ( مساعدين)', answer: 'تذوق'),
+    // Question(question: 'كيم شم ( مساعدين)', answer: 'شم'),
+    // Question(question: 'الفرق بين الشمال الحقيقي والشمال المغناطيسي', answer: 'الفرق'),
+    // Question(question: 'لف ودوران وكورة ( مساعدين)', answer: 'لف ودوران وكورة'),
+    // Question(question: 'ربط الفولار بطريقتين مختلفتين ( اصغر فرد بالطليعة)(مساعدين)', answer: 'ربط الفولار'),
+    // Question(question: 'كم عضمة في جسم الانسان (206 عضمة) ( شفرة)', answer: '206'),
+    // Question(question: 'رسم الزي الكشفي ( مساعدين)', answer: 'رسم الزي'),
+    // Question(question: 'ماهي عدد المجالس بالفرقة ', answer: 'عدد المجالس'),
+    // Question(question: 'ارسم 5 اعلام لتاريخ مصر ( مساعدين)', answer: 'اعلام'),
+    // Question(question: 'اذكر اسم اول فارس بالحركة ', answer: 'اسم اول فارس'),
+    // Question(question: 'شفرة عادية ', answer: 'شفرة'),
+    // Question(question: 'ماهي اسم الزهرة المستخدمة في علم وعد الفتيان ', answer: 'اسم الزهرة'),
+    // Question(question: 'عمل رسالة بالسيمافور(مساعدين)', answer: 'رسالة بالسيمافور'),
+    // Question(question: 'ماهي المسافة بين العريف واول فرد في التفتيش', answer: 'المسافة'),
+    // Question(question: 'شفرة عادية', answer: 'شفرة'),
+    // Question(question: 'كيم نظر', answer: 'نظر'),
+  ];

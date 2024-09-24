@@ -1,8 +1,9 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:den/questions.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import '../functions.dart';
 import '../theme.dart';
+import 'finishWidget.dart';
 
 
 class QuizGame extends StatefulWidget {
@@ -15,33 +16,7 @@ class QuizGame extends StatefulWidget {
 }
 
 class _QuizGameState extends State<QuizGame> {
-  List<Question> questions = [
-    Question(question: 'غني اغنية كشفية مع طليعتك ( مساعدين)', answer: 'اغنية كشفية'),
-    Question(question: 'شفرة عادية', answer: 'شفرة'),
-    Question(question: 'ما هي االدولة التي تم بها اخر مؤتمر كشفي عالمي ( شفرة)', answer: 'الدولة'),
-    Question(question: 'متي تأسست الحركة الكشفية في مصر', answer: '1914'),
-    Question(question: 'من هي مؤسسة المرشدات ', answer: 'أوليفير'),
-    Question(question: 'عمل ( 15 ضغط فردي + 30 بطن فردي + عربية فول في دقيقة للطليعة) ( مساعدين)', answer: 'تمارين'),
-    Question(question: 'كم عدد المصريين الحاصلين علي نوبل', answer: '4'),
-    Question(question: 'لعبة رمي الجولة (مساعدين)', answer: 'رمي الجولة'),
-    Question(question: 'شفرة عادية', answer: 'شفرة'),
-    Question(question: 'كيم تذوق ( مساعدين)', answer: 'تذوق'),
-    Question(question: 'كيم شم ( مساعدين)', answer: 'شم'),
-    Question(question: 'الفرق بين الشمال الحقيقي والشمال المغناطيسي', answer: 'الفرق'),
-    Question(question: 'لف ودوران وكورة ( مساعدين)', answer: 'لف ودوران وكورة'),
-    Question(question: 'ربط الفولار بطريقتين مختلفتين ( اصغر فرد بالطليعة)(مساعدين)', answer: 'ربط الفولار'),
-    Question(question: 'كم عضمة في جسم الانسان (206 عضمة) ( شفرة)', answer: '206'),
-    Question(question: 'رسم الزي الكشفي ( مساعدين)', answer: 'رسم الزي'),
-    Question(question: 'ماهي عدد المجالس بالفرقة ', answer: 'عدد المجالس'),
-    Question(question: 'ارسم 5 اعلام لتاريخ مصر ( مساعدين)', answer: 'اعلام'),
-    Question(question: 'اذكر اسم اول فارس بالحركة ', answer: 'اسم اول فارس'),
-    Question(question: 'شفرة عادية ', answer: 'شفرة'),
-    Question(question: 'ماهي اسم الزهرة المستخدمة في علم وعد الفتيان ', answer: 'اسم الزهرة'),
-    Question(question: 'عمل رسالة بالسيمافور(مساعدين)', answer: 'رسالة بالسيمافور'),
-    Question(question: 'ماهي المسافة بين العريف واول فرد في التفتيش', answer: 'المسافة'),
-    Question(question: 'شفرة عادية', answer: 'شفرة'),
-    Question(question: 'كيم نظر', answer: 'نظر'),
-  ];
+ 
   int currentQuestionIndex = 0;
   String userAnswer = '';
   bool secondChance = false;
@@ -54,6 +29,7 @@ class _QuizGameState extends State<QuizGame> {
     groupId = widget.groupId;
     teamId = widget.teamId;
     loadQuestionIndex();
+    saveALoadSecondChance();
   }
 
   void loadQuestionIndex() async {
@@ -65,26 +41,41 @@ class _QuizGameState extends State<QuizGame> {
       });
     }
   }
+  void saveALoadSecondChance() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    await prefs.setBool('secondChance', secondChance);
+    bool? savedSecondChance = prefs.getBool('secondChance');
+    if (savedSecondChance != null) {
+      setState(() {
+        secondChance = savedSecondChance;
+      });
+    }
+  }
 
   void saveQuestionIndex() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     await prefs.setInt('currentQuestionIndex', currentQuestionIndex);
   }
+  void saveFinish() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    await prefs.setBool('finished', true);
+
+  }
   void submitAnswer() {
     print(' currentQuestionIndex: $currentQuestionIndex , questions.length: ${questions.length}');
     if (currentQuestionIndex >= questions.length) {
+      saveFinish();
       // Quiz is over
       showDialog(
         context: context,
         builder: (BuildContext context) {
-          return finish();
+          return FinishWidget();
         },
       );
       return;
     }
-    if (userAnswer.trim().toLowerCase() == questions[currentQuestionIndex].answer.trim().toLowerCase() || userAnswer.startsWith('ZQ')) {
-      // Call updateScore from HomeWeb class
-      if(userAnswer.startsWith('ZQ')){
+    if (userAnswer.trim().toLowerCase() == questions[currentQuestionIndex].answer.trim().toLowerCase() || (userAnswer.startsWith('ZQ') && currentQuestionIndex % 2 == 0)) {
+      if(userAnswer.startsWith('ZQ')&& currentQuestionIndex % 2 == 0){
         final taskScore = int.parse(userAnswer[userAnswer.length - 1]);
         updateScore( groupId!, teamId!, taskScore, context);
       }else{
@@ -92,16 +83,18 @@ class _QuizGameState extends State<QuizGame> {
      // saveQuestionIndex();
       setState(() {
         if(currentQuestionIndex == questions.length - 1){
+          saveFinish();
           showDialog(
             context: context,
             builder: (BuildContext context) {
-              return finish();
+              return FinishWidget();
             },
           );
           return;
         }
         currentQuestionIndex++;
         secondChance = false;
+        saveALoadSecondChance();
         answerController.clear();
       });
     } else if (!secondChance) {
@@ -114,22 +107,25 @@ class _QuizGameState extends State<QuizGame> {
       );
       setState(() {
         secondChance = true;
+        saveALoadSecondChance();
         answerController.clear();
       });
     } else {
      // saveQuestionIndex();
       setState(() {
         if(currentQuestionIndex == questions.length - 1){
+          saveFinish();
           showDialog(
             context: context,
             builder: (BuildContext context) {
-              return finish();
+              return FinishWidget();
             },
           );
           return;
         }
         currentQuestionIndex++;
         secondChance = false;
+        saveALoadSecondChance();
         answerController.clear();
       });
     }
@@ -280,34 +276,5 @@ try{
       ),
     );
   }
-  Widget finish(){
-    return Directionality(
-      textDirection: TextDirection.rtl,
-      child: AlertDialog(
-        backgroundColor: secondColor,
-        title: Text('انتهت اللعبة !',style: TextStyle(
-          fontSize: 20,
-          fontFamily: '18 Khebrat',
-          color: primaryColor,
-        ),textAlign: TextAlign.center,),
-        content: Text('لقد تم تسليم جميع التحديات بنجاح',style: TextStyle(
-          fontSize: 16,
-          fontFamily: '18 Khebrat',
-          color: primaryColor,
-        ),textAlign: TextAlign.center,),
-        actions: <Widget>[
-          TextButton(
-            child: Text('اغلاق',style: TextStyle(
-              fontSize: 16,
-              fontFamily: '18 Khebrat',
-              color: primaryColor,
-            ),),
-            onPressed: () {
-              Navigator.of(context).pop();
-            },
-          ),
-        ],
-      ),
-    );
-  }
+ 
 }
