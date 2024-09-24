@@ -29,7 +29,7 @@ class _QuizGameState extends State<QuizGame> {
     groupId = widget.groupId;
     teamId = widget.teamId;
     loadQuestionIndex();
-    saveALoadSecondChance();
+    saveALoadSecondChance(false);
   }
 
   void loadQuestionIndex() async {
@@ -41,15 +41,20 @@ class _QuizGameState extends State<QuizGame> {
       });
     }
   }
-  void saveALoadSecondChance() async {
+  void saveALoadSecondChance(bool save) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    await prefs.setBool('secondChance', secondChance);
+    debugPrint('saveSecondChance: $save');
+    if(save){
+      await prefs.setBool('secondChance', secondChance);
+    }else
+ {
     bool? savedSecondChance = prefs.getBool('secondChance');
     if (savedSecondChance != null) {
       setState(() {
         secondChance = savedSecondChance;
       });
-    }
+      print('secondChance: $secondChance');
+    }}
   }
 
   void saveQuestionIndex() async {
@@ -74,13 +79,14 @@ class _QuizGameState extends State<QuizGame> {
       );
       return;
     }
-    if (userAnswer.trim().toLowerCase() == questions[currentQuestionIndex].answer.trim().toLowerCase() || (userAnswer.startsWith('ZQ') && currentQuestionIndex % 2 == 0)) {
-      if(userAnswer.startsWith('ZQ')&& currentQuestionIndex % 2 == 0){
+
+    if (userAnswer.trim().toLowerCase() == questions[currentQuestionIndex].answer.trim().toLowerCase() || (userAnswer.startsWith('ZQ') && (currentQuestionIndex+1) % 2 == 0)) {
+      if(userAnswer.startsWith('ZQ')&& (currentQuestionIndex+1) % 2 == 0){
         final taskScore = int.parse(userAnswer[userAnswer.length - 1]);
         updateScore( groupId!, teamId!, taskScore, context);
       }else{
      updateScore( groupId!, teamId!, 10, context);} // Adjust parameters as needed
-     // saveQuestionIndex();
+      saveQuestionIndex();
       setState(() {
         if(currentQuestionIndex == questions.length - 1){
           saveFinish();
@@ -94,7 +100,7 @@ class _QuizGameState extends State<QuizGame> {
         }
         currentQuestionIndex++;
         secondChance = false;
-        saveALoadSecondChance();
+        saveALoadSecondChance(true);
         answerController.clear();
       });
     } else if (!secondChance) {
@@ -107,11 +113,11 @@ class _QuizGameState extends State<QuizGame> {
       );
       setState(() {
         secondChance = true;
-        saveALoadSecondChance();
+        saveALoadSecondChance(true);
         answerController.clear();
       });
     } else {
-     // saveQuestionIndex();
+      saveQuestionIndex();
       setState(() {
         if(currentQuestionIndex == questions.length - 1){
           saveFinish();
@@ -125,7 +131,7 @@ class _QuizGameState extends State<QuizGame> {
         }
         currentQuestionIndex++;
         secondChance = false;
-        saveALoadSecondChance();
+        saveALoadSecondChance(true);
         answerController.clear();
       });
     }
@@ -144,7 +150,11 @@ try{
     }
 
     int newScore = teamSnapshot.get('score') + scoreIncrease; // Ensure this line is correct
-    await teams.doc(teamId).update({'score': newScore}); // Ensure this line is correct
+    await teams.doc(teamId).update({'score': newScore});
+    Map<String, dynamic> data = teamSnapshot.data() as Map<String, dynamic>;
+    int gameScore = data.containsKey('gameScore') ? data['gameScore'] : 0;
+    gameScore += scoreIncrease;
+    await teams.doc(teamId).update({'gameScore': gameScore});
 }catch(e){
   print(e);
 }
