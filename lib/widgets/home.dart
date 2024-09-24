@@ -4,8 +4,6 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_countdown_timer/flutter_countdown_timer.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:video_player/video_player.dart';
-
 import '../login.dart';
 import '../theme.dart';
 import 'finishWidget.dart';
@@ -28,8 +26,7 @@ class _HomeState extends State<Home> {
   int hours = 1;
   String score = '';
   bool finished = false;
-  bool isPlaying = false;
-  bool isVideo=true;
+  bool isVideo = true;
   String taskName = '';
   DateTime currentPhoneDate = DateTime.now();
   int time = 0;
@@ -63,23 +60,13 @@ class _HomeState extends State<Home> {
         hours = fields['hours'];
         time = fields['time'].millisecondsSinceEpoch;
         taskName = fields['name'];
-        isVideo=fields['video'];
+        isVideo = fields['video'];
         task = fields['task'];
         endTime = time + (hours * 1000 * 60 * 60);
       });
-      if (task.isNotEmpty) {
-        _controller = VideoPlayerController.network(task)
-          ..initialize().then((_) {
-            setState(() {});
-          });
-
-        if (_controller != null &&
-            endTime > currentPhoneDate.millisecondsSinceEpoch) {
-          _controller!.play();
-        }
-      }
     });
   }
+
   Future<List<Map<String, dynamic>>> getTop10FromCollection() async {
     QuerySnapshot querySnapshot = await FirebaseFirestore.instance
         .collection('top10')
@@ -87,8 +74,11 @@ class _HomeState extends State<Home> {
         .limit(10)
         .get();
 
-    return querySnapshot.docs.map((doc) => doc.data() as Map<String, dynamic>).toList();
+    return querySnapshot.docs
+        .map((doc) => doc.data() as Map<String, dynamic>)
+        .toList();
   }
+
   Future<int> fetchNotificationCount() async {
     QuerySnapshot snapshot =
         await FirebaseFirestore.instance.collection('news').get();
@@ -110,12 +100,6 @@ class _HomeState extends State<Home> {
     return newNotificationsCount;
   }
 
-
-
-
-  VideoPlayerController? _controller;
-
-  bool _showVideo = true;
   String addScore = '';
   String reason = '';
   String groupId = '';
@@ -130,17 +114,11 @@ class _HomeState extends State<Home> {
   }
 
   @override
-  void dispose() {
-    super.dispose();
-    _controller?.dispose();
-  }
-
-  @override
   Widget build(BuildContext context) {
     return Directionality(
         textDirection: TextDirection.rtl,
         child: Scaffold(
-          backgroundColor:  primaryColor,
+          backgroundColor: primaryColor,
           appBar: AppBar(
             actions: [
               Padding(
@@ -219,9 +197,9 @@ class _HomeState extends State<Home> {
                 ],
               ),
             ),
-            backgroundColor:  primaryColor,
+            backgroundColor: primaryColor,
             centerTitle: true,
-            title:  Text(
+            title: Text(
               'THE GAME',
               style: TextStyle(
                 fontSize: 30,
@@ -333,24 +311,28 @@ class _HomeState extends State<Home> {
                           ),
                         ),
                         InkWell(
-                          onTap: () async{ SharedPreferences prefs = await SharedPreferences.getInstance();
-    finished = prefs.getBool('finished') ?? false;
-    print('finished: $finished');
-    finished?  showDialog(
-            context: context,
-            builder: (BuildContext context) {
-              return FinishWidget();
-            },
-          ):Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) => QuizGame(
-                                      groupId: group,
-                                      teamId: patrouille,
-                                )),
-                          );
-    } 
-                         , child: Text(
+                          onTap: () async {
+                            SharedPreferences prefs =
+                                await SharedPreferences.getInstance();
+                            finished = prefs.getBool('finished') ?? false;
+                            print('finished: $finished');
+                            finished
+                                ? showDialog(
+                                    context: context,
+                                    builder: (BuildContext context) {
+                                      return FinishWidget();
+                                    },
+                                  )
+                                : Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (context) => QuizGame(
+                                              groupId: group,
+                                              teamId: patrouille,
+                                            )),
+                                  );
+                          },
+                          child: Text(
                             '  اللعبة  ',
                             style: TextStyle(
                               fontSize: 12,
@@ -411,14 +393,18 @@ class _HomeState extends State<Home> {
                       ),
                     ),
                   ),
-
                   FutureBuilder<List<Map<String, dynamic>>>(
                     future: getTop10FromCollection(),
-                    builder: (BuildContext context, AsyncSnapshot<List<Map<String, dynamic>>> snapshot) {
+                    builder: (BuildContext context,
+                        AsyncSnapshot<List<Map<String, dynamic>>> snapshot) {
                       if (snapshot.connectionState == ConnectionState.waiting) {
-                        return Center(child: CircularProgressIndicator(color:secondColor)); // Show a loading spinner while waiting for data
+                        return Center(
+                            child: CircularProgressIndicator(
+                                color:
+                                    secondColor)); // Show a loading spinner while waiting for data
                       } else if (snapshot.hasError) {
-                        return Text('Error: ${snapshot.error}'); // Show error message if something went wrong
+                        return Text(
+                            'Error: ${snapshot.error}'); // Show error message if something went wrong
                       } else {
                         // Build a list of ListTile widgets from the data
                         return SizedBox(
@@ -427,20 +413,53 @@ class _HomeState extends State<Home> {
                             itemCount: snapshot.data!.length,
                             itemBuilder: (context, index) {
                               return Card(
-                                color:group==snapshot.data![index]['collectionId']&&patrouille==snapshot.data![index]['docId']?secondColor: primaryColor.withOpacity(0.7),
+                                color: group ==
+                                            snapshot.data![index]
+                                                ['collectionId'] &&
+                                        patrouille ==
+                                            snapshot.data![index]['docId']
+                                    ? secondColor
+                                    : primaryColor.withOpacity(0.7),
                                 child: ListTile(
-                                  leading: Text('${index + 1}',style: TextStyle(
-                                    fontFamily: '18 Khebrat',
-                                    color:group==snapshot.data![index]['collectionId']&&patrouille==snapshot.data![index]['docId']?primaryColor: secondColor,
-                                  ),),
-                                  title: Text('${snapshot.data![index]['docId']} ${snapshot.data![index]['collectionId']}',style: TextStyle(
-                                    fontFamily: '18 Khebrat',
-                                    color: group==snapshot.data![index]['collectionId']&&patrouille==snapshot.data![index]['docId']?primaryColor:secondColor,
-                                  ),),
-                                  trailing: Text('النقاط: ${snapshot.data![index]['score']}',style: TextStyle(
-                                    fontFamily: '18 Khebrat',
-                                    color:group==snapshot.data![index]['collectionId']&&patrouille==snapshot.data![index]['docId']?primaryColor:secondColor,
-                                  ),),
+                                  leading: Text(
+                                    '${index + 1}',
+                                    style: TextStyle(
+                                      fontFamily: '18 Khebrat',
+                                      color: group ==
+                                                  snapshot.data![index]
+                                                      ['collectionId'] &&
+                                              patrouille ==
+                                                  snapshot.data![index]['docId']
+                                          ? primaryColor
+                                          : secondColor,
+                                    ),
+                                  ),
+                                  title: Text(
+                                    '${snapshot.data![index]['docId']} ${snapshot.data![index]['collectionId']}',
+                                    style: TextStyle(
+                                      fontFamily: '18 Khebrat',
+                                      color: group ==
+                                                  snapshot.data![index]
+                                                      ['collectionId'] &&
+                                              patrouille ==
+                                                  snapshot.data![index]['docId']
+                                          ? primaryColor
+                                          : secondColor,
+                                    ),
+                                  ),
+                                  trailing: Text(
+                                    'النقاط: ${snapshot.data![index]['score']}',
+                                    style: TextStyle(
+                                      fontFamily: '18 Khebrat',
+                                      color: group ==
+                                                  snapshot.data![index]
+                                                      ['collectionId'] &&
+                                              patrouille ==
+                                                  snapshot.data![index]['docId']
+                                          ? primaryColor
+                                          : secondColor,
+                                    ),
+                                  ),
                                 ),
                               );
                             },
@@ -449,91 +468,12 @@ class _HomeState extends State<Home> {
                       }
                     },
                   ),
-                  SizedBox(height: 10,)
+                  SizedBox(
+                    height: 10,
+                  )
                 ],
               ),
             ),
-            if (isVideo&&_showVideo &&
-                _controller != null &&
-                endTime > currentPhoneDate.millisecondsSinceEpoch)
-              Stack(
-                children: [
-                  Opacity(
-                    opacity: 0.8, // Adjust this value to change the opacity
-                    child: Container(
-                      color: Colors.black,
-                    ),
-                  ),
-                  Center(
-                    child: _controller!.value.isInitialized
-                        ? AspectRatio(
-                            aspectRatio: 1, // Change aspect ratio to 1:1
-                            child: Stack(
-                              fit: StackFit.expand,
-                              children: [
-                                VideoPlayer(_controller!),
-                                InkWell(
-                                  hoverColor: Colors.transparent,
-                                  onTap: () {
-                                    setState(() {
-                                      _controller!.value.isPlaying
-                                          ? _controller!.pause()
-                                          : _controller!.play();
-                                    });
-                                  },
-                                ),
-                                Positioned(
-                                  top: 8,
-                                  left: 16,
-                                  child: IconButton(
-                                    icon:
-                                        Icon(Icons.close, color: Colors.white),
-                                    onPressed: () {
-                                      setState(() {
-                                        _showVideo = false;
-                                        _controller!.pause();
-                                      });
-                                    },
-                                  ),
-                                ),
-                              ],
-                            ),
-                          )
-                        : FutureBuilder<void>(
-                            future: Future.delayed(Duration(seconds: 7)),
-                            builder: (context, snapshot) {
-                              if (snapshot.connectionState ==
-                                  ConnectionState.done) {
-                                if (!_controller!.value.isInitialized) {
-                                  // If the video is still not initialized after 10 seconds, hide the video player
-                                  WidgetsBinding.instance
-                                      .addPostFrameCallback((_) {
-                                    if (mounted) {
-                                      setState(() {
-                                        _showVideo = false;
-                                        _controller!.pause();
-                                      });
-                                    }
-                                  });
-                                }
-                                return Container();
-                              } else {
-                                // While waiting for the future to complete, show a loading spinner
-                                return Container(
-                                  height:
-                                      MediaQuery.of(context).size.height * 0.3,
-                                  child: Center(
-                                    child: CircularProgressIndicator(
-                                      color: secondColor,
-                                    ),
-                                  ),
-                                );
-                              }
-                            },
-                          ),
-                  ),
-                ],
-              ),
           ]),
         ));
   }

@@ -3,10 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_countdown_timer/flutter_countdown_timer.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:video_player/video_player.dart';
 import 'package:url_launcher/url_launcher.dart';
 import '../theme.dart';
-import 'package:connectivity/connectivity.dart';
 class Task extends StatefulWidget {
   final String video;
   String score;
@@ -33,7 +31,6 @@ class Task extends StatefulWidget {
 }
 
 class _TaskState extends State<Task> {
-  late final VideoPlayerController _controller;
   String editScore = '';
   int editHours = 0;
   String submit = '';
@@ -108,11 +105,7 @@ class _TaskState extends State<Task> {
   void initState() {
     super.initState();
     checkSubmitted();
-    _controller = VideoPlayerController.network(widget.video)
-      ..initialize().then((_) {
-        // Ensure the first frame is shown after the video is initialized, even before the play button has been pressed.
-        setState(() {});
-      });
+
   }
 void checkSubmitted()async{
     SharedPreferences prefs= await SharedPreferences.getInstance();
@@ -123,11 +116,7 @@ void checkSubmitted()async{
       });
     }
 }
-  @override
-  void dispose() {
-    super.dispose();
-    _controller.dispose();
-  }
+
 
   @override
   Widget build(BuildContext context) {
@@ -177,32 +166,7 @@ void checkSubmitted()async{
               SizedBox(
                 height: MediaQuery.of(context).size.height * 0.05,
               ),
-              widget.isVideo?
 
-              Center(
-                child: _controller.value.isInitialized
-                    ? AspectRatio(
-                        aspectRatio: _controller.value.aspectRatio,
-                        child: InkWell(
-                            hoverColor: Colors.transparent,
-                            onTap: () {
-                              setState(() {
-                                _controller.value.isPlaying
-                                    ? _controller.pause()
-                                    : _controller.play();
-                              });
-                            },
-                            child: VideoPlayer(_controller)),
-                      )
-                    : Container(
-                        height: MediaQuery.of(context).size.height * 0.3,
-                        child: Center(
-                          child: CircularProgressIndicator(
-                            color: Colors.white54,
-                          ),
-                        ),
-                      ),
-              ):
               Padding(
                 padding: const EdgeInsets.all(8.0),
                 child: Column(

@@ -38,9 +38,6 @@ dependencies:
   firebase_core:
   cloud_firestore:
   firebase_storage:
-  awesome_notifications:
-  firebase_messaging:
-  video_player:
   url_launcher:
   url_launcher_web:
   flutter_countdown_timer:

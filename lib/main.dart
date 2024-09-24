@@ -1,8 +1,6 @@
-import 'package:awesome_notifications/awesome_notifications.dart';
 import 'package:den/widgets/home.dart';
 import 'package:den/widgets/login_web.dart';
 import 'package:firebase_core/firebase_core.dart';
-import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -18,33 +16,7 @@ void main() async {
           messagingSenderId: '1000661085166',
           projectId: 'camp-645f3', apiKey: 'AIzaSyCHbqHrjFz6IJNSXSO_H-u9r5RUXmDLO_A')
   );
-  FirebaseMessaging.instance.getInitialMessage().then((RemoteMessage? message) {
-    if (message != null) {
-      // Handle the message
-    }
-  });
 
-  FirebaseMessaging.onMessage.listen((RemoteMessage message) {
-    // Handle the message
-  });
-
-  FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message) {
-    // Handle the message
-  });
-  // AwesomeNotifications().initialize(
-  //   'resource://drawable/game',
-  //   [
-  //     NotificationChannel(
-  //         channelKey: 'basic_channel',
-  //         channelName: 'Basic notifications',
-  //         channelDescription: 'Notification channel for basic tests',
-  //         ledColor: Colors.white,
-  //         playSound: false,
-  //         // defaultRingtoneType: DefaultRingtoneType.Notification,
-  //         soundSource: 'resource://raw/den')
-  //   ],
-  // );
-  FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
   runApp(MyApp());
 }
 Future<String?> getGroup() async {
@@ -92,17 +64,3 @@ class MyApp extends StatelessWidget {
 
 
 
-Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
-  print("Handling a background message: ${message.messageId}");
-  AwesomeNotifications().createNotification(
-    content: NotificationContent(
-        id: 10,
-        channelKey: 'basic_channel', // Make sure this matches the channel key used in AwesomeNotifications().initialize()
-        title: message.data['title'] ?? '',
-        body: message.data['body'] ?? '',
-        customSound:  'resource://raw/den',
-        wakeUpScreen: true,
-        fullScreenIntent: true
-    ),
-  );
-}
