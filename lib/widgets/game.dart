@@ -82,7 +82,7 @@ class _QuizGameState extends State<QuizGame> {
 
     if (userAnswer.trim().toLowerCase() == questions[currentQuestionIndex].answer.trim().toLowerCase() || (userAnswer.startsWith('ZQ') && (currentQuestionIndex+1) % 2 == 0)) {
       if(userAnswer.startsWith('ZQ')&& (currentQuestionIndex+1) % 2 == 0){
-        final taskScore = int.parse(userAnswer[userAnswer.length - 1]);
+        final taskScore = int.parse(userAnswer.substring(userAnswer.length - 2));
         updateScore( groupId!, teamId!, taskScore, context);
       }else{
      updateScore( groupId!, teamId!, 10, context);} // Adjust parameters as needed
