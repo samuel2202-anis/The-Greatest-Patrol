@@ -43,6 +43,8 @@ dependencies:
   flutter_countdown_timer:
   shared_preferences:
   connectivity:
+  printing:
+  google_fonts:
 
 dev_dependencies:
   flutter_test:
@@ -81,7 +83,7 @@ flutter:
         - asset: fonts/CandidasaRegular-vmpMO.ttf
     - family: 18 Khebrat
       fonts:
-        - asset: fonts/18 Khebrat Musamim Regular.ttf
+        - asset: fonts/18Khebrat_Musamim_Regular.ttf
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware
