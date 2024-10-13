@@ -1,8 +1,12 @@
 import 'package:den/widgets/news.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter/gestures.dart';
+import 'package:printing/printing.dart';
+import 'package:pdf/pdf.dart';
+import 'package:pdf/widgets.dart' as pw;
 
 import '../theme.dart';
 //import 'dart:html' as html;
@@ -711,7 +715,28 @@ class _HomeWebState extends State<HomeWeb> {
                                   ),
                                 ),
                               ),
-                            )
+                            ),
+                            // New button for printing
+                            Padding(
+                              padding: const EdgeInsets.all(16.0),
+                              child: ElevatedButton(
+                                onPressed: () {
+                                  // Implement the print functionality here
+                                  printTable();
+                                },
+                                child: Text(
+                                  'طباعة',
+                                  style: TextStyle(
+                                    fontSize: 14,
+                                    fontFamily: '18 Khebrat',
+                                    color: Colors.white,
+                                  ),
+                                ),
+                                style: ButtonStyle(
+                                  backgroundColor: MaterialStateProperty.all(secondColor),
+                                ),
+                              ),
+                            ),
                           ],
                         ),
                       ],
@@ -1196,5 +1221,61 @@ class _HomeWebState extends State<HomeWeb> {
         ),
       ),
     );
+  }
+
+  void printTable() async {
+    // Create a PDF document
+    final pdf = pw.Document();
+
+    // Sample data for the table
+    List<Map<String, dynamic>> scoresData = await getTopScores(); // Fetch your data here
+    debugPrint(scoresData[0].toString());
+
+    // Define a Google Font for Arabic support
+   final arabicFont = pw.Font.ttf(await rootBundle.load("fonts/Cairo.ttf"));
+
+    // Add pages to the PDF
+    const int itemsPerPage = 30; // Number of items per page
+    for (int i = 0; i < scoresData.length; i += itemsPerPage) {
+        final end = (i + itemsPerPage < scoresData.length) ? i + itemsPerPage : scoresData.length;
+
+        pdf.addPage(
+            pw.Page(
+        textDirection: pw.TextDirection.rtl,
+                build: (pw.Context context) {
+                    return pw.Center(
+                        child: pw.Table(
+
+                            border: pw.TableBorder.all(),
+                            children: [
+                                pw.TableRow(
+                                    children: [
+                                        pw.Text('الطبوغرافيا', style: pw.TextStyle(fontWeight: pw.FontWeight.bold,font: arabicFont),textAlign: pw.TextAlign.center),
+                                        pw.Text('نقاط اللعبة', style: pw.TextStyle(fontWeight: pw.FontWeight.bold,font: arabicFont),textAlign: pw.TextAlign.center),
+                                        pw.Text('الطليعة', style: pw.TextStyle(fontWeight: pw.FontWeight.bold,font: arabicFont),textAlign: pw.TextAlign.center),
+                                        pw.Text('المجموعة', style: pw.TextStyle(fontWeight: pw.FontWeight.bold,font: arabicFont),textAlign: pw.TextAlign.center), 
+                                    ],
+                                ),
+                                ...scoresData.sublist(i, end).map((score) {
+                                    return pw.TableRow(
+                                      verticalAlignment: pw.TableCellVerticalAlignment.middle,
+                                        children: [
+                                            pw.Text(score['tepo8rfyaScore']==null?'0':score['tepo8rfyaScore'].toString(), style: pw.TextStyle(font: arabicFont,fontSize: 12),textAlign: pw.TextAlign.center),
+                                            pw.Text(score['score'].toString(), style: pw.TextStyle(font: arabicFont,fontSize: 12),textAlign: pw.TextAlign.center),
+                                            pw.Text(score['docId'].toString(), style: pw.TextStyle(font: arabicFont,fontSize: 12),textAlign: pw.TextAlign.center),
+                                            pw.Text(score['collectionId'].toString(), style: pw.TextStyle(font: arabicFont,fontSize: 12),textAlign: pw.TextAlign.center),
+                                        ],
+                                    );
+                                }).toList(),
+                            ],
+                        ),
+                    );
+                },
+            ),
+        );
+    }
+
+    // Print the document
+    await Printing.layoutPdf(onLayout: (PdfPageFormat format) async => pdf.save());
   }
 }
