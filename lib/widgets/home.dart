@@ -2,12 +2,12 @@ import 'package:den/widgets/news.dart';
 import 'package:den/widgets/task.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_countdown_timer/flutter_countdown_timer.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../login.dart';
 import '../theme.dart';
 import 'finishWidget.dart';
 import 'game.dart';
+import 'tebo8rfya.dart';
 
 class Home extends StatefulWidget {
   const Home({Key? key}) : super(key: key);
@@ -121,6 +121,7 @@ class _HomeState extends State<Home> {
           backgroundColor: primaryColor,
           appBar: AppBar(
             actions: [
+               
               Padding(
                 padding: const EdgeInsets.all(8.0),
                 child: IconButton(
@@ -141,6 +142,7 @@ class _HomeState extends State<Home> {
                       color: secondColor,
                     )),
               )
+
             ],
             leading: Padding(
               padding: const EdgeInsets.all(8.0),
@@ -302,15 +304,113 @@ class _HomeState extends State<Home> {
                                     )),
                           ),
                           child: Text(
-                            'عرض التحدي',
+                            'عرض اخر تحدي',
                             style: TextStyle(
-                              fontSize: 12,
+                              fontSize: 13,
                               fontFamily: '18 Khebrat',
                               color: secondColor,
                             ),
                           ),
                         ),
-                        InkWell(
+                       
+                  
+                      ],
+                    ),
+                  ),
+                  SizedBox(
+                    height: 32,
+                  ),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    children: [
+                      Container(
+                        height: 150,
+                        width: 150,
+                        
+                        decoration: BoxDecoration(
+                          color: secondColor,
+                          
+                          borderRadius: BorderRadius.circular(16),
+                        ),
+                        child: InkWell(
+                          onTap: () async {
+                            final model = await showDialog<int>(
+                              context: context,
+                              builder: (BuildContext context) {
+                                return Directionality(
+                                  textDirection: TextDirection.rtl,
+                                  child: AlertDialog(
+                                    backgroundColor: secondColor,
+                                    title: Text('برجاء ادخال رقم النموذج الخاص بالطليعة',
+                                        style: TextStyle(
+                                          color: primaryColor,
+                                          fontSize: 14,
+                                          fontFamily: '18 Khebrat',
+                                        )),
+                                    content: SingleChildScrollView(
+                                      child: ListBody(
+                                        children: <Widget>[
+                                          for (int i = 1; i <= 6; i++)
+                                            ListTile(
+                                              leading: Icon(
+                                                Icons.arrow_left_rounded,
+                                                color: primaryColor,
+                                              ),
+                                              title: Text(' نموذج $i ',
+                                                  style: TextStyle(
+                                                    color: primaryColor,
+                                                    fontFamily: '18 Khebrat',
+                                                  )),
+                                              onTap: () => Navigator.of(context).pop(i),
+                                            ),
+                                        ],
+                                      ),
+                                    ),
+                                  ),
+                                );
+                              },
+                            );
+                            if (model != null) {
+                              Navigator.of(context).push(
+                                MaterialPageRoute(builder: (context) => Tob8orfya(
+                                  group: group,
+                                  patrouille: patrouille,
+                                  model: model,
+                                )),);
+                            }
+                          },
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Icon(
+                                Icons.map,
+                                size: 40,
+                                color: primaryColor,
+                              ),
+                              SizedBox(
+                                height: 8,
+                              ),
+                              Text(
+                                'الطبوغرافيا',
+                                style: TextStyle(
+                                  fontSize: 18,
+                                  fontFamily: '18 Khebrat',
+                                  color: primaryColor,
+                                ),
+                              ),
+                            ],
+                          ),
+                      
+                        ),
+                      ),
+                      Container(
+                        height: 150,
+                        width: 150,
+                        decoration: BoxDecoration(
+                          color: secondColor,
+                          borderRadius: BorderRadius.circular(16),
+                        ),
+                        child: InkWell(
                           onTap: () async {
                             SharedPreferences prefs =
                                 await SharedPreferences.getInstance();
@@ -332,53 +432,32 @@ class _HomeState extends State<Home> {
                                             )),
                                   );
                           },
-                          child: Text(
-                            '  اللعبة  ',
-                            style: TextStyle(
-                              fontSize: 12,
-                              fontFamily: '18 Khebrat',
-                              color: secondColor,
-                            ),
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Icon(
+                                Icons.gamepad,
+                                size: 40,
+                                color: primaryColor,
+                              ),
+                              SizedBox(
+                                height: 8,
+                              ),
+                              Text(
+                                'اللعبة',
+                                style: TextStyle(
+                                  fontSize: 18,
+                                  fontFamily: '18 Khebrat',
+                                  color: primaryColor,
+                                ),
+                              ),
+                            ],
                           ),
                         ),
-                      ],
-                    ),
-                  ),
-                  SizedBox(
-                    height: 32,
-                  ),
-                  Center(
-                    child: Directionality(
-                      textDirection: TextDirection.ltr,
-                      child: CountdownTimer(
-                        endTime: endTime,
-                        endWidget: Text(
-                          'لا يوجد تحديات الان',
-                          style: TextStyle(
-                            fontSize: 24,
-                            fontFamily: '18 Khebrat',
-                            color: secondColor,
-                          ),
-                        ),
-                        textStyle: TextStyle(
-                          fontSize: 60,
-                          fontFamily: 'candid',
-                          color: secondColor,
-                        ),
                       ),
-                    ),
+                    ],
                   ),
-                  if (endTime > currentPhoneDate.millisecondsSinceEpoch)
-                    Center(
-                      child: Text(
-                        'نقاط التحدي : $score',
-                        style: TextStyle(
-                          fontSize: 22,
-                          fontFamily: '18 Khebrat',
-                          color: secondColor,
-                        ),
-                      ),
-                    ),
+                  
                   SizedBox(
                     height: 32,
                   ),
