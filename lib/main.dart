@@ -7,7 +7,9 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:den/theme.dart';
 
 import 'login.dart';
-
+//pdf:
+  //printing:
+  //google_fonts:
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(
