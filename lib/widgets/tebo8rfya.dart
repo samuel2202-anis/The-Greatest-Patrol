@@ -22,6 +22,7 @@ class Tob8orfya extends StatefulWidget {
 class _Tob8orfyaState extends State<Tob8orfya> {
   List<String> message = [];
   List<List> coordinates = [];
+  double angle = 0;
 
   bool submitted = false;
 
@@ -35,8 +36,11 @@ class _Tob8orfyaState extends State<Tob8orfya> {
       setState(() {
         message.add(fields['message1']);
         message.add(fields['message2']);
+        message.add(fields['message3']);
         coordinates.add(fields['coor1']);
         coordinates.add(fields['coor2']);
+        angle=fields['angle'].toDouble();
+
         debugPrint('message: ${message.toString()}');
         debugPrint('coordinates: ${coordinates[0][0].toString()}');
       });
@@ -77,7 +81,10 @@ try{
   }
 
 
-TextEditingController answerController = TextEditingController();
+TextEditingController northController = TextEditingController();
+TextEditingController eastController = TextEditingController();
+TextEditingController angleController = TextEditingController();
+
   @override
   Widget build(BuildContext context) {
     // Ensure we don't exceed the message list length
@@ -136,14 +143,77 @@ TextEditingController answerController = TextEditingController();
                       ),
                     ),
                     SizedBox(height: 30,),
-                    Padding(
+                    if(currentIndex<2)
+                    Column(
+                      children: [
+                        Center(
+                          child: Text('ادخل النقاط مثل 32.111 ',style: TextStyle(
+                            fontSize: 14,
+                            fontFamily: '18 Khebrat',
+                            color: secondColor,
+                          ),),
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.only(top: 16.0, right: 16, left: 16),
+                          child: TextField(
+                            keyboardType: TextInputType.number,
+                            controller: northController,
+                          decoration: InputDecoration(
+                            labelText: 'النقطة في اتجاه الشمال (N)',
+                            hintText: 'النقطة في اتجاه الشمال (N)',
+                          focusedBorder: OutlineInputBorder(
+                              borderRadius: BorderRadius.all(Radius.circular(4)),
+                              borderSide: BorderSide(width: 1, color: secondColor),
+                            ),
+                            labelStyle: TextStyle(color: secondColor),
+                            hintStyle: TextStyle(color: secondColor),
+                            border: OutlineInputBorder(
+                              
+                              borderRadius: BorderRadius.all(Radius.circular(4)),
+                              borderSide: BorderSide(width: 1, color: secondColor),
+                            ),
+                            
+                          
+                          )
+                                            
+                                          ),
+                        ),
+                        Padding(
                       padding: const EdgeInsets.all(16.0),
                       child: TextField(
                         keyboardType: TextInputType.number,
-                        controller: answerController,
+                        controller: eastController,
                       decoration: InputDecoration(
-                        labelText: 'النقاط',
-                        hintText: 'النقاط',
+                        labelText: 'النقطة في اتجاه الشرق (E)',
+                        hintText: 'النقطة في اتجاه الشرق (E)',
+                      focusedBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.all(Radius.circular(4)),
+                          borderSide: BorderSide(width: 1, color: secondColor),
+                        ),
+                        labelStyle: TextStyle(color: secondColor),
+                        hintStyle: TextStyle(color: secondColor),
+                        border: OutlineInputBorder(
+                          
+                          borderRadius: BorderRadius.all(Radius.circular(4)),
+                          borderSide: BorderSide(width: 1, color: secondColor),
+                        ),
+                        
+                      
+                      )
+                                        
+                                      ),
+                    ),
+                      ],
+                    ),
+                    if(currentIndex>=2)
+                       Padding(
+                      padding: const EdgeInsets.all(16.0),
+                      child: TextField(
+                        keyboardType: TextInputType.number,
+                        controller: angleController,
+                      decoration: InputDecoration(
+                        labelText: 'الزاوية',
+                        hintText: 'الزاوية',
                       focusedBorder: OutlineInputBorder(
                           borderRadius: BorderRadius.all(Radius.circular(4)),
                           borderSide: BorderSide(width: 1, color: secondColor),
@@ -168,43 +238,42 @@ TextEditingController answerController = TextEditingController();
                   ),
                   onPressed: () {
                     // Check if the quiz has ended
-                    if (currentIndex == 2) {
+                    if (currentIndex == 3) {
                        ScaffoldMessenger.of(context).showSnackBar(
                           SnackBar(
                             backgroundColor:secondColor,
-                            content: Center(child: Text('لقد تم تسليم جميع النقاط')),
+                            content: Center(child: Text('لقد تم تسليم جميع الطلبات')),
                             duration: const Duration(seconds: 3),
                           ),
                         );
                       return; // Exit the function if the quiz has ended
                     }
+                  if(currentIndex<2){
+                    final northAnswer = double.parse(northController.text);
+                    final eastAnswer = double.parse(eastController.text);
 
-                    final value = double.parse(answerController.text);
-                    final coordinates2 = coordinates[currentIndex]; // Get coordinates for the current question
-                    if (value >= coordinates2[0] && value <= coordinates2[1]) {
-                      updateScore(10, context);
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(
-                          backgroundColor: Colors.green,
-                          content: Center(child: Text('اجابة صحيحة')),
-                          duration: const Duration(seconds: 3),
-                        ),
-                      );
+                    final coordinates2 = coordinates[currentIndex]; 
+                    if (northAnswer >= coordinates2[0] && northAnswer <= coordinates2[2]&&
+                        eastAnswer >= coordinates2[1] && eastAnswer <= coordinates2[3]) {
+                  _checkAnswer(true);
                     } else {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(
-                          backgroundColor: Colors.red,
-                          content: Center(child: Text('اجابة خاطئة')),
-                          duration: const Duration(seconds: 3),
-                        ),
-                      );
+                      _checkAnswer(false);
+
+                    }}else{
+                      final angleAnswer = double.parse(angleController.text);
+                      if(angleAnswer==angle){
+                        _checkAnswer(true);
+                      }else{
+                        _checkAnswer(false);
+                      }
                     }
                     // Move to the next question
                     setState(() {
-                      debugPrint('currentIndex: $currentIndex');
-                     
+                      debugPrint('currentIndex: $currentIndex');                
                         currentIndex++;
-                        answerController.clear(); 
+                        northController.clear();
+                        eastController.clear();
+                        angleController.clear(); 
                         SharedPreferences.getInstance().then((prefs) {
                           prefs.setInt('TepoIndex', currentIndex);
                         });
@@ -223,10 +292,35 @@ TextEditingController answerController = TextEditingController();
         ),
       ),
     );
-  }    
+  }   
+  void dispose() {
+    northController.dispose();
+    eastController.dispose();
+    angleController.dispose();
+    super.dispose();
+  } 
+  void _checkAnswer(bool correct){
+if(correct){
+   updateScore(10, context);
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(
+                          backgroundColor: Colors.green,
+                          content: Center(child: Text('اجابة صحيحة')),
+                          duration: const Duration(seconds: 3),
+                        ),
+                      );
+  }else{
+    ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(
+                          backgroundColor: Colors.red,
+                          content: Center(child: Text('اجابة خاطئة')),
+                          duration: const Duration(seconds: 3),
+                        ),
+                      );
+  }
 }     
               
             
-      
+}      
 
 
