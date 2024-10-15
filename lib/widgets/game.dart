@@ -66,7 +66,7 @@ class _QuizGameState extends State<QuizGame> {
     await prefs.setBool('finished', true);
 
   }
-  void submitAnswer() {
+  Future<void> submitAnswer() async {
     print(' currentQuestionIndex: $currentQuestionIndex , questions.length: ${questions.length}');
     if (currentQuestionIndex >= questions.length) {
       saveFinish();
@@ -118,6 +118,7 @@ class _QuizGameState extends State<QuizGame> {
       });
     } else {
       saveQuestionIndex();
+
       setState(() {
         if(currentQuestionIndex == questions.length - 1){
           saveFinish();
@@ -133,6 +134,19 @@ class _QuizGameState extends State<QuizGame> {
         secondChance = false;
         saveALoadSecondChance(true);
         answerController.clear();
+      });
+       CollectionReference collectionReference =
+      FirebaseFirestore.instance.collection('submitTasks');
+  
+      await collectionReference.add({
+        'taskName': 'اللعبة ${currentQuestionIndex} ', 
+        'patrouille': widget.teamId,
+        'group': widget.groupId,
+        //'group': ((int.parse(widget.groupId)*4)-1).toString(),
+
+        'submit': userAnswer,
+        'time': DateTime.now(),
+        'viewed':false
       });
     }
     answerController.clear();
@@ -180,107 +194,117 @@ try{
         ),
         body: Padding(
           padding: const EdgeInsets.all(8.0),
-          child: Column(
-            children: <Widget>[
-              Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: Column(
-                  children: [
-                    Container(
-                      decoration: BoxDecoration(
-                        color: secondColor,
-                        borderRadius: BorderRadius.circular(20),
-                      ),
-                      child: Column(
-                        children: [
-                          Align(
-                            alignment: Alignment.topRight,
-                            child: Padding(
-                              padding: const EdgeInsets.all(8.0),
-                              child: Text(' رقم ${currentQuestionIndex + 1}/25',style: TextStyle(
-                                fontSize: 16,
-                                fontFamily: '18 Khebrat',
-                                color: primaryColor
-                              ),),
-                            ),
-                          ),
-                          SizedBox(height: 12,),
-                          Center(
-                            child: Padding(
-                              padding: const EdgeInsets.all(16.0),
-                              child: Text(questions[currentQuestionIndex].question,textAlign:TextAlign.center,style: TextStyle(
-
-                                fontSize: 20,
-                                fontFamily: '18 Khebrat',
-                                color: primaryColor,
-                              ),),
-                            ),
-                          ),
-
-                          SizedBox(height: 12,),
-                          if(questions[currentQuestionIndex].hint != null)
+          child: SingleChildScrollView(
+            child: Column(
+              children: <Widget>[
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Column(
+                    children: [
+                      Container(
+                        decoration: BoxDecoration(
+                          color: secondColor,
+                          borderRadius: BorderRadius.circular(20),
+                        ),
+                        child: Column(
+                          children: [
                             Align(
-                              alignment: Alignment.bottomLeft,
+                              alignment: Alignment.topRight,
                               child: Padding(
                                 padding: const EdgeInsets.all(8.0),
-                                child: Text(' 🗝 : ${questions[currentQuestionIndex].hint}',style: TextStyle(
-                                  fontSize: 12,
+                                child: Text(' رقم ${currentQuestionIndex + 1}/30',style: TextStyle(
+                                  fontSize: 16,
                                   fontFamily: '18 Khebrat',
                                   color: primaryColor
                                 ),),
                               ),
                             ),
-
-                        ],
+                            SizedBox(height: 12,),
+                            Center(
+                              child: Padding(
+                                padding: const EdgeInsets.all(16.0),
+                                child: Text(questions[currentQuestionIndex].question,textAlign:TextAlign.center,style: TextStyle(
+            
+                                  fontSize: 20,
+                                  fontFamily: '18 Khebrat',
+                                  color: primaryColor,
+                                ),),
+                              ),
+                            ),
+            
+                            SizedBox(height: 12,),
+                            if(questions[currentQuestionIndex].hint != null)
+                              Align(
+                                alignment: Alignment.bottomLeft,
+                                child: Padding(
+                                  padding: const EdgeInsets.all(16.0),
+                                  child: Text(' 🗝 : ${questions[currentQuestionIndex].hint}',style: TextStyle(
+                                    fontSize: 14,
+                                    fontFamily: '18 Khebrat',
+                                    color: primaryColor
+                                  ),),
+                                ),
+                              ),
+            
+                          ],
+                        ),
                       ),
-                    ),
-                    SizedBox(height: 20,),
-                  ],
-                ),
-              ),
-             // Text(questions[currentQuestionIndex].question),
-              Padding(
-                padding: const EdgeInsets.all(16.0),
-                child: TextField(
-                  controller: answerController,
-                  style: TextStyle(
-                    color: secondColor,
+                      SizedBox(height: 20,),
+                    ],
                   ),
-                  decoration: InputDecoration(
-                    hintText: 'الاجابة',
-                    hintStyle: TextStyle(
+                ),
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Text('ملاحظات : \n- في حالة الخطأ اذا كنت متأكد من الاجابة قم بتسليمها مرة اخري وسيتم مراجعة الاجابة.\n - في حالة الالعاب يجب مشاركة جميع افراد الطليعة .',style: TextStyle(
+                    fontSize: 14,
+                    fontFamily: '18 Khebrat',
+                    color: secondColor,
+                  ),),
+                ),
+               // Text(questions[currentQuestionIndex].question),
+                Padding(
+                  padding: const EdgeInsets.all(16.0),
+                  child: TextField(
+                    controller: answerController,
+                    style: TextStyle(
                       color: secondColor,
                     ),
-                    enabledBorder: OutlineInputBorder(
-                      borderSide: BorderSide(
+                    decoration: InputDecoration(
+                      hintText: 'الاجابة',
+                      hintStyle: TextStyle(
                         color: secondColor,
                       ),
-                    ),
-                    focusedBorder: OutlineInputBorder(
-                      borderSide: BorderSide(
-                        color: secondColor,
+                      enabledBorder: OutlineInputBorder(
+                        borderSide: BorderSide(
+                          color: secondColor,
+                        ),
+                      ),
+                      focusedBorder: OutlineInputBorder(
+                        borderSide: BorderSide(
+                          color: secondColor,
+                        ),
                       ),
                     ),
+            
+                    onChanged: (value) {
+                      userAnswer = value;
+                    },
                   ),
-
-                  onChanged: (value) {
-                    userAnswer = value;
-                  },
                 ),
-              ),
-              SizedBox(height: 24,),
-              ElevatedButton(
-                onPressed: submitAnswer,
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: secondColor,
+                SizedBox(height: 24,),
+                ElevatedButton(
+                  onPressed: submitAnswer,
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: secondColor,
+                  ),
+                  child: Text('تسليم',style: TextStyle(
+                    fontSize: 18,
+                    fontFamily: '18 Khebrat',
+                    color: primaryColor,
+                  ),),
                 ),
-                child: Text('تسليم',style: TextStyle(
-                  fontSize: 18,
-                  fontFamily: '18 Khebrat',
-                  color: primaryColor,
-                ),),
-              ),
-            ],
+              ],
+            ),
           ),
         ),
       ),
