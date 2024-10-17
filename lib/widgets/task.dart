@@ -58,7 +58,7 @@ class _TaskState extends State<Task> {
         'taskName': widget.taskName,
         'patrouille': widget.patrouille,
         'group': widget.group,
-        'submit': submit,
+        'submit': 'Done : $submit',
         'time': DateTime.now(),
         'viewed':false
       });
