@@ -23,6 +23,8 @@ class _QuizGameState extends State<QuizGame> {
   final TextEditingController answerController = TextEditingController();
   String? groupId ;
   String? teamId ;
+  bool isLoading = false; // Add this line to track loading state
+
   @override
   void initState() {
     super.initState();
@@ -67,6 +69,20 @@ class _QuizGameState extends State<QuizGame> {
 
   }
   Future<void> submitAnswer() async {
+    setState(() {
+      isLoading = true; // Set loading to true when the function starts
+    });
+
+    if (userAnswer.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          backgroundColor: Colors.red,
+          content: Center(child: Text('الرجاء ادخال الاجابة')),
+          duration: Duration(seconds: 2),
+        ),
+      );
+      return;
+    }
     print(' currentQuestionIndex: $currentQuestionIndex , questions.length: ${questions.length}');
     if (currentQuestionIndex >= questions.length) {
       saveFinish();
@@ -82,7 +98,10 @@ class _QuizGameState extends State<QuizGame> {
 
     if (userAnswer.trim().toLowerCase() == questions[currentQuestionIndex].answer.trim().toLowerCase() || (userAnswer.startsWith('ZQ') && (currentQuestionIndex+1) % 2 == 0)) {
       if(userAnswer.startsWith('ZQ')&& (currentQuestionIndex+1) % 2 == 0){
-        final taskScore = int.parse(userAnswer.substring(userAnswer.length - 2));
+        int taskScore = int.parse(userAnswer.substring(userAnswer.length - 2));
+        if(taskScore>10){
+          taskScore = 10;
+        }
         updateScore( groupId!, teamId!, taskScore, context);
       }else{
      updateScore( groupId!, teamId!, 10, context);} // Adjust parameters as needed
@@ -151,6 +170,9 @@ class _QuizGameState extends State<QuizGame> {
     }
     answerController.clear();
     userAnswer = '';
+    setState(() {
+      isLoading = false; // Set loading to false when the function ends
+    });
   }
  Future<void> updateScore(String groupId, String teamId,
       int scoreIncrease,  BuildContext context) async {
@@ -299,15 +321,19 @@ try{
                 ),
                 SizedBox(height: 24,),
                 ElevatedButton(
-                  onPressed: submitAnswer,
+                  onPressed: isLoading ? null : submitAnswer, // Disable button if loading
                   style: ElevatedButton.styleFrom(
                     backgroundColor: secondColor,
                   ),
-                  child: Text('تسليم',style: TextStyle(
-                    fontSize: 18,
-                    fontFamily: '18 Khebrat',
-                    color: primaryColor,
-                  ),),
+                  child: isLoading 
+                    ? CircularProgressIndicator(
+                      color: secondColor,
+                    ) // Show loading indicator
+                    : Text('تسليم', style: TextStyle(
+                        fontSize: 18,
+                        fontFamily: '18 Khebrat',
+                        color: primaryColor,
+                      )),
                 ),
               ],
             ),
