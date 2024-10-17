@@ -47,9 +47,9 @@ class MyApp extends StatelessWidget {
             print("Error");
           }
           if (snapshot.connectionState == ConnectionState.done) {
-            if(kIsWeb){
-              return LoginWeb();
-            }
+            // if(kIsWeb){
+            //   return LoginWeb();
+            // }
             String? name = snapshot.data?[1] as String?;
             if (name != null && name.isNotEmpty) {
               return Home();
