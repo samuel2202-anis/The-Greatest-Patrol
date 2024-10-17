@@ -22,7 +22,8 @@ class Tob8orfya extends StatefulWidget {
 class _Tob8orfyaState extends State<Tob8orfya> {
   List<String> message = [];
   List<List> coordinates = [];
-  double angle = 0;
+  double angle1 = 0;
+  double angle2 = 0;
 
   bool submitted = false;
 
@@ -39,7 +40,8 @@ class _Tob8orfyaState extends State<Tob8orfya> {
         message.add(fields['message3']);
         coordinates.add(fields['coor1']);
         coordinates.add(fields['coor2']);
-        angle=fields['angle'].toDouble();
+        angle1=fields['angle1'].toDouble();
+        angle2=fields['angle2'].toDouble();
 
         debugPrint('message: ${message.toString()}');
         debugPrint('coordinates: ${coordinates[0][0].toString()}');
@@ -76,7 +78,7 @@ try{
   void initState() {
     super.initState();
     getData();
-    checkSubmitted();
+    //checkSubmitted();
 
   }
 
@@ -134,11 +136,12 @@ TextEditingController angleController = TextEditingController();
                       child: Center(
                         child: Padding(
                           padding: const EdgeInsets.all(16.0),
-                          child: Text(messageForDisplay,textAlign:TextAlign.center,style: TextStyle(
+                          child: currentIndex!=1?Text(messageForDisplay,textAlign:TextAlign.center,style: TextStyle(
                             fontSize: 20,
                             fontFamily: '18 Khebrat',
                             color: primaryColor,
-                          ),),
+                          ),)
+                          :Image.network(message[1],height: 200,),
                         ),
                       ),
                     ),
@@ -147,7 +150,7 @@ TextEditingController angleController = TextEditingController();
                     Column(
                       children: [
                         Center(
-                          child: Text('ادخل النقاط مثل 32.111 ',style: TextStyle(
+                          child: Text(' ادخل النقاط مثل 31.335809 -- عدد 6 نقط بعد الرقم',style: TextStyle(
                             fontSize: 14,
                             fontFamily: '18 Khebrat',
                             color: secondColor,
@@ -261,7 +264,7 @@ TextEditingController angleController = TextEditingController();
 
                     }}else{
                       final angleAnswer = double.parse(angleController.text);
-                      if(angleAnswer==angle){
+                      if(angleAnswer>=angle1&&angleAnswer<=angle2){
                         _checkAnswer(true);
                       }else{
                         _checkAnswer(false);
