@@ -238,11 +238,17 @@ try{
                                 alignment: Alignment.bottomLeft,
                                 child: Padding(
                                   padding: const EdgeInsets.all(16.0),
-                                  child: Text(' 🗝 : ${questions[currentQuestionIndex].hint}',style: TextStyle(
-                                    fontSize: 14,
-                                    fontFamily: '18 Khebrat',
-                                    color: primaryColor
-                                  ),),
+                                  child: Row(
+                                    mainAxisAlignment: MainAxisAlignment.end,
+                                    children: [
+                                      Icon(Icons.lightbulb_outline,color: primaryColor,),
+                                      Text('  : ${questions[currentQuestionIndex].hint}',style: TextStyle(
+                                        fontSize: 14,
+                                        fontFamily: '18 Khebrat',
+                                        color: primaryColor
+                                      ),),
+                                    ],
+                                  ),
                                 ),
                               ),
             
