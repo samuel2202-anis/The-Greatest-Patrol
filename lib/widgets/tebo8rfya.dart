@@ -28,7 +28,7 @@ class _Tob8orfyaState extends State<Tob8orfya> {
   bool submitted = false;
 
   int currentIndex = 0; // Track the current question index
-
+String messageForDisplay='';
   void getData() {
     CollectionReference collectionReference =
         FirebaseFirestore.instance.collection('tepo');
@@ -42,6 +42,7 @@ class _Tob8orfyaState extends State<Tob8orfya> {
         coordinates.add(fields['coor2']);
         angle1=fields['angle1'].toDouble();
         angle2=fields['angle2'].toDouble();
+     messageForDisplay = currentIndex < message.length ? message[currentIndex] : message.last;
 
         debugPrint('message: ${message.toString()}');
         debugPrint('coordinates: ${coordinates[0][0].toString()}');
@@ -90,7 +91,7 @@ TextEditingController angleController = TextEditingController();
   @override
   Widget build(BuildContext context) {
     // Ensure we don't exceed the message list length
-    String messageForDisplay = currentIndex < message.length ? message[currentIndex] : message.last;
+   // String messageForDisplay = currentIndex < message.length ? message[currentIndex] : message.last;
 
     return Directionality(
       textDirection: TextDirection.rtl,
@@ -118,7 +119,14 @@ TextEditingController angleController = TextEditingController();
             ),
           ),
         ),
-        body: SingleChildScrollView(
+        body: message.isEmpty
+            ? Center(
+                child: CircularProgressIndicator(
+                  color: secondColor,
+                ),
+              )
+            :
+        SingleChildScrollView(
           child: Column(
             children: [
               SizedBox(
@@ -150,17 +158,18 @@ TextEditingController angleController = TextEditingController();
                     Column(
                       children: [
                         Center(
-                          child: Text(' ادخل النقاط مثل 31.335809 -- عدد 6 نقط بعد الرقم',style: TextStyle(
+                          child: Text(' ادخل النقاط مثل 172617.31 -- عدد 6 نقط بعد الرقم',style: TextStyle(
                             fontSize: 14,
                             fontFamily: '18 Khebrat',
-                            color: secondColor,
-                          ),),
+                            color: secondColor,                      
+                          ),textDirection:TextDirection.rtl,),
                         ),
                         Padding(
                           padding: const EdgeInsets.only(top: 16.0, right: 16, left: 16),
                           child: TextField(
                             keyboardType: TextInputType.number,
                             controller: northController,
+                          
                           decoration: InputDecoration(
                             labelText: 'النقطة في اتجاه الشمال (N)',
                             hintText: 'النقطة في اتجاه الشمال (N)',
