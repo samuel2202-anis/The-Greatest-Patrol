@@ -24,6 +24,7 @@ class _HomeState extends State<Home> {
   String password = '';
   String patrouilleScore = '';
   int hours = 1;
+  bool start=false;
   String score = '';
   bool finished = false;
   bool isVideo = true;
@@ -61,6 +62,7 @@ class _HomeState extends State<Home> {
         time = fields['time'].millisecondsSinceEpoch;
         taskName = fields['name'];
         isVideo = fields['video'];
+        start=fields['start'];
         task = fields['task'];
         endTime = time + (hours * 1000 * 60 * 60);
       });
@@ -334,7 +336,15 @@ class _HomeState extends State<Home> {
                         ),
                         child: InkWell(
                           onTap: () async {
-                            final model = await showDialog<int>(
+                            if(!start){
+                              await showDialog(
+                                context: context,
+                                builder: (BuildContext context) {
+                                  return notStarted();
+                                },
+                              );
+                            }
+                         else {  final model = await showDialog<int>(
                               context: context,
                               builder: (BuildContext context) {
                                 return Directionality(
@@ -377,7 +387,7 @@ class _HomeState extends State<Home> {
                                   patrouille: patrouille,
                                   model: model,
                                 )),);
-                            }
+                            }}
                           },
                           child: Column(
                             mainAxisAlignment: MainAxisAlignment.center,
@@ -412,7 +422,15 @@ class _HomeState extends State<Home> {
                         ),
                         child: InkWell(
                           onTap: () async {
-                            SharedPreferences prefs =
+                            if(!start){
+                              await showDialog(
+                                context: context,
+                                builder: (BuildContext context) {
+                                  return notStarted();
+                                },
+                              );
+                            }
+                            else{SharedPreferences prefs =
                                 await SharedPreferences.getInstance();
                             finished = prefs.getBool('finished') ?? false;
                             print('finished: $finished');
@@ -430,7 +448,7 @@ class _HomeState extends State<Home> {
                                               groupId: group,
                                               teamId: patrouille,
                                             )),
-                                  );
+                                  );}
                           },
                           child: Column(
                             mainAxisAlignment: MainAxisAlignment.center,
@@ -555,5 +573,51 @@ class _HomeState extends State<Home> {
             ),
           ]),
         ));
+  }
+  Widget notStarted (){
+    return Directionality(
+                                  textDirection: TextDirection.rtl,
+                                  child: AlertDialog(
+                                    backgroundColor: secondColor,
+                                    title: Text('المسابقة لم تبدأ بعد',
+                                        style: TextStyle(
+                                          color: primaryColor,
+                                          fontSize: 14,
+                                          fontFamily: '18 Khebrat',
+                                        )),
+                                    content: Builder(
+                                      builder: (context) => Container(
+                                        width: 300,
+                                        child: Column(
+                                          mainAxisSize: MainAxisSize.min,
+                                          children: <Widget>[
+                                            Text(
+                                              'المسابقة ستبدأ في اليوم المنتظر .. استعدواا',
+                                              style: TextStyle(
+                                                color: primaryColor,
+                                                fontFamily: '18 Khebrat',
+                                              ),
+                                            ),
+                                            SizedBox(
+                                              height: 16,
+                                            ),
+                                            ElevatedButton(
+                                              onPressed: () {
+                                                Navigator.of(context).pop();
+                                              },
+                                              child: Text(
+                                                'اغلاق',
+                                                style: TextStyle(
+                                                  color: primaryColor,
+                                                  fontFamily: '18 Khebrat',
+                                                ),
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                );
   }
 }
