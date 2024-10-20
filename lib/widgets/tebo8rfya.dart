@@ -44,8 +44,8 @@ String messageForDisplay='';
         angle2=fields['angle2'].toDouble();
      messageForDisplay = currentIndex < message.length ? message[currentIndex] : message.last;
 
-        debugPrint('message: ${message.toString()}');
-        debugPrint('coordinates: ${coordinates[0][0].toString()}');
+        // debugPrint('message: ${message.toString()}');
+        // debugPrint('coordinates: ${coordinates[0][0].toString()}');
       });
     });
   }
@@ -79,7 +79,7 @@ try{
   void initState() {
     super.initState();
     getData();
-    checkSubmitted();
+    //checkSubmitted();
 
   }
 
@@ -91,8 +91,10 @@ TextEditingController angleController = TextEditingController();
   @override
   Widget build(BuildContext context) {
     // Ensure we don't exceed the message list length
-   // String messageForDisplay = currentIndex < message.length ? message[currentIndex] : message.last;
-
+   // String messageForDisplay = currentIndex < message.length ? message[currentIndex] : message.last;b
+   debugPrint(message.toString());
+  debugPrint('currentIndex: $currentIndex');
+  debugPrint('messageForDisplay: $messageForDisplay');
     return Directionality(
       textDirection: TextDirection.rtl,
       child: Scaffold(
@@ -144,12 +146,12 @@ TextEditingController angleController = TextEditingController();
                       child: Center(
                         child: Padding(
                           padding: const EdgeInsets.all(16.0),
-                          child: currentIndex!=1?Text(messageForDisplay,textAlign:TextAlign.center,style: TextStyle(
+                          child: currentIndex!=1?Text(currentIndex>2?message.last:message[currentIndex],textAlign:TextAlign.center,style: TextStyle(
                             fontSize: 20,
                             fontFamily: '18 Khebrat',
                             color: primaryColor,
                           ),)
-                          :Image.network(message[1],height: 200,),
+                          :Image.network(message[currentIndex],height: 200,),
                         ),
                       ),
                     ),
@@ -158,7 +160,7 @@ TextEditingController angleController = TextEditingController();
                     Column(
                       children: [
                         Center(
-                          child: Text(' ادخل النقاط مثل 172617.31 -- عدد 6 نقط بعد الرقم',style: TextStyle(
+                          child: Text(' ادخل النقاط مثل 31.201298 -- عدد 6 نقط بعد الرقم',style: TextStyle(
                             fontSize: 14,
                             fontFamily: '18 Khebrat',
                             color: secondColor,                      
