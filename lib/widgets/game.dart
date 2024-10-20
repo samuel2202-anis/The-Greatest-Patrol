@@ -100,7 +100,12 @@ class _QuizGameState extends State<QuizGame> {
       if(userAnswer.startsWith('ZQ')&& (currentQuestionIndex+1) % 2 == 0){
         int taskScore = int.parse(userAnswer.substring(userAnswer.length - 2));
         if(taskScore>10){
+          String hour=DateTime.now().hour.toString();
+          String minute=DateTime.now().minute.toString();
+          FirebaseFirestore.instance.collection("news").add(
+                    {'news':'$teamId $groupId , لعبة $currentQuestionIndex , $hour:$minute ','points':taskScore.toString()});
           taskScore = 10;
+
         }
         updateScore( groupId!, teamId!, taskScore, context);
       }else{
@@ -326,8 +331,11 @@ try{
                     backgroundColor: secondColor,
                   ),
                   child: isLoading 
-                    ? CircularProgressIndicator(
-                      color: secondColor,
+                    ? Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: CircularProgressIndicator(
+                        color: secondColor,
+                      ),
                     ) // Show loading indicator
                     : Text('تسليم', style: TextStyle(
                         fontSize: 18,
