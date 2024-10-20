@@ -79,7 +79,7 @@ try{
   void initState() {
     super.initState();
     getData();
-    //checkSubmitted();
+    checkSubmitted();
 
   }
 
