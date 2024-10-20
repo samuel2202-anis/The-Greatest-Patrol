@@ -1,4 +1,3 @@
-import 'package:den/widgets/news.dart';
 import 'package:den/widgets/task.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
@@ -146,61 +145,6 @@ class _HomeState extends State<Home> {
               )
 
             ],
-            leading: Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: Stack(
-                alignment: Alignment.topRight,
-                children: [
-                  IconButton(
-                    onPressed: () {
-                      Navigator.push(context,
-                              MaterialPageRoute(builder: (context) => News()))
-                          .then((value) {
-                        setState(() {
-                          getNewNotificationCount();
-                        });
-                      });
-                    },
-                    icon: Icon(
-                      Icons.notifications,
-                      color: secondColor,
-                    ),
-                  ),
-                  FutureBuilder<int>(
-                    future: getNewNotificationCount(),
-                    builder:
-                        (BuildContext context, AsyncSnapshot<int> snapshot) {
-                      if (snapshot.hasData && snapshot.data! > 0) {
-                        return Positioned(
-                          right: 11,
-                          top: 11,
-                          child: Container(
-                            padding: EdgeInsets.all(2),
-                            decoration: BoxDecoration(
-                              color: Colors.red,
-                              borderRadius: BorderRadius.circular(6),
-                            ),
-                            constraints: BoxConstraints(
-                              minWidth: 14,
-                              minHeight: 14,
-                            ),
-                            child: Text(
-                              '${snapshot.data}',
-                              style: TextStyle(
-                                color: Colors.white,
-                                fontSize: 8,
-                              ),
-                              textAlign: TextAlign.center,
-                            ),
-                          ),
-                        );
-                      }
-                      return Container(); // return an empty container when there's no data
-                    },
-                  ),
-                ],
-              ),
-            ),
             backgroundColor: primaryColor,
             centerTitle: true,
             title: Text(
